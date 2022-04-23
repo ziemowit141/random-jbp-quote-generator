@@ -26,12 +26,17 @@ func get_random_quote_number() int {
 	return random_number_generator.Intn(10)
 }
 
-func get_quote() string {
-	return JBP_QUOTES[get_random_quote_number()]
+func get_quote(inner_wisdom chan string) {
+	inner_wisdom <- JBP_QUOTES[get_random_quote_number()]
 }
 
 func main() {
 	fmt.Println("Random JBP Quote Generator")
 	fmt.Println("Your quote for Today is:")
-	fmt.Println(get_quote())
+
+	inner_wisdom := make(chan string, 1)
+
+	go get_quote(inner_wisdom)
+
+	fmt.Println(<-inner_wisdom)
 }
